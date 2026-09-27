@@ -14,8 +14,8 @@ const SubscribeResult = struct {
 const Rect = struct {
     x: i64,
     y: i64,
-    width: usize,
-    height: usize,
+    width: isize,
+    height: isize,
 };
 
 const Workspace = struct {
@@ -29,9 +29,9 @@ const Workspace = struct {
 };
 
 const Mode = struct {
-    width: usize,
-    height: usize,
-    refresh: usize,
+    width: isize,
+    height: isize,
+    refresh: isize,
 };
 
 const Output = struct {
