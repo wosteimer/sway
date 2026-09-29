@@ -527,17 +527,27 @@ pub const EventHandler = struct {
         allocator.destroy(self.arena);
     }
 
-    pub fn next(self: *const EventHandler) !Event {
+    pub fn next(self: *const EventHandler) !?Event {
         _ = self.arena.reset(.retain_capacity);
         const allocator = self.arena.allocator();
         var header: [14]u8 = undefined;
-        try self.in.readSliceAll(&header);
+        self.in.readSliceAll(&header) catch |err| {
+            switch (err) {
+                error.EndOfStream => return null,
+                else => return err,
+            }
+        };
         const len: i32, const event_tag: EventTag = .{
             std.mem.bytesToValue(i32, header[6..10]),
             @enumFromInt(std.mem.bytesToValue(u32, header[10..])),
         };
         const buf = try allocator.alloc(u8, @intCast(len));
-        try self.in.readSliceAll(buf);
+        self.in.readSliceAll(buf) catch |err| {
+            switch (err) {
+                error.EndOfStream => return null,
+                else => return err,
+            }
+        };
         return switch (event_tag) {
             .workspace => .{ .workspace = try std.json.parseFromSliceLeaky(
                 @FieldType(Event, "workspace"),
