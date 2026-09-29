@@ -63,7 +63,7 @@ const WindowProperties = struct {
     instance: ?[]u8 = null,
     window_role: ?[]u8 = null,
     window_type: ?[]u8 = null,
-    transient_for: ?[]u8 = null,
+    transient_for: ?i32 = null,
 };
 
 const Node = struct {
